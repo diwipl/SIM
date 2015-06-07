@@ -16,12 +16,14 @@ class Convolution
 
     public static function convolution2D($input, $kernel)
     {
+        $kernelWidth = count($kernel);
+
+        $input = self::expandInput($input, floor($kernelWidth/2));
+
         $kernel = self::flipKernel($kernel);
 
         $width = $height = count($input);
 
-
-        $kernelWidth = count($kernel);
         $smallWidth = $width-$kernelWidth+1;
         $smallHeight = $height-$kernelWidth+1;
 
