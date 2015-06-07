@@ -66,6 +66,21 @@ class Matrix {
         return $matrix;
     }
 
+    public static function multiplyMatrices($matrix, $matrix2) {
+        $rows = count($matrix);
+        $columns = count($matrix[0]);
+
+        for($i=0;$i<$rows;$i++) {
+
+            for($j = 0; $j < $columns; $j++) {
+                $matrix[$i][$j] *= $matrix2[$i][$j];
+            }
+        }
+
+        return $matrix;
+
+    }
+
     public static function divide($matrix, $number) {
         $rows = count($matrix);
 
