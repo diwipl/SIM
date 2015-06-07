@@ -62,24 +62,54 @@ class Convolution
         return $kernel;
     }
 
-    public static function expandInput($input) {
+    public static function expandInput($input,$number=1) {
         $size = count($input);
+
 
         $output = array();
 
-        $firstLastRow = array();
-        for($i = 0; $i<$size+2; $i++) {
-            $firstLastRow[$i] = 0;
-        }
+        $firstRow = array();
 
-        $output[0] = $firstLastRow;
+        for($i =0; $i<$number;$i++) {
+            $firstRow[$i] = $input[0][0];
+        }
 
         for($i=0;$i<$size;$i++) {
-            $output[$i+1] = array_merge([0], array_merge($input[$i],[0]));
+            $firstRow[$i+$number] = $input[0][$i];
         }
 
-        $output[$size+2] = $firstLastRow;
+        for($i=0;$i<$number;$i++) {
+            $firstRow[$size+$number+$i] = $input[0][$size-1];
+        }
+
+        for($i =0; $i<$number;$i++) {
+            $output[$i] = $firstRow;
+        }
+
+
+        for($i=0;$i<$size;$i++) {
+            $output[$i+$number] = array_merge(array_fill(0,$number,$input[$i][0]), array_merge($input[$i],array_fill(0,$number,$input[$i][$size-1])));
+        }
+
+        for($i =0; $i<$number;$i++) {
+            $lastRow[$i] = $input[$size-1][0];
+        }
+
+        for($i=0;$i<$size;$i++) {
+            $lastRow[$i+$number] = $input[$size-1][$i];
+        }
+
+        for($i=0;$i<$number;$i++) {
+            $lastRow[$size+$number+$i] = $input[$size-1][$size-1];
+        }
+
+        for($i =0; $i<$number;$i++) {
+            $output[$size+$number+$i] = $lastRow;
+        }
+
 
         return $output;
     }
+
+
 }
