@@ -76,32 +76,40 @@ class LPF
         return $data;
     }
 
-    public static function idct($data) {
-        $out = array();
-        $n = count($data);
+//    public static function idct($data) {
+//        $out = array();
+//        $n = count($data);
+//
+//        for ($i = 0; $i < $n; $i++) {
+//            $sum = 0;
+//            for ($j = 1; $j < $n; $j++) {
+//                $sum += $data[$j]*cos(pi()*$j*(2*$i+1)/(2*$n));
+//            }
+//            $out[$i] = 1/sqrt($n)*$data[0] + sqrt(2/$n) * $sum;
+//        }
+//
+//        return $out;
+//    }
 
-        for ($i = 0; $i < $n; $i++) {
-            $sum = 0;
-            for ($j = 1; $j < $n; $j++) {
-                $sum += $data[$j]*cos(pi()*$j*(2*$i+1)/(2*$n));
-            }
-            $out[$i] = 1/sqrt($n)*$data[0] + sqrt(2/$n) * $sum;
-        }
-
-        return $out;
-    }
-
-    //TODO nie dziala
     public static function idct2($data) {
-        $data_r = array(array());
-        for ($row = 0; $row < count($data); $row++) {
-            $data_r[$row] = LPF::idct($data[$row]);
-        }
+        $result = array(array());
+        $rows = count($data);
         $cols = count($data[0]);
-        for ($col = 0; $col < $cols; $col++) {
-            $afterDct = LPF::idct(Matrix::getColumn($data, $col));
-            $data = Matrix::setColumn($data, $col, $afterDct);
+
+        //$n = $rows;
+        for ($i=0;$i<$rows;$i++) {
+            for ($j=0;$j<$cols;$j++) {
+                $sum = 0;
+                for ($u=0;$u<$rows;$u++) {
+                    $cu = $u == 0 ? 1/sqrt(2) : 1;
+                    for ($v=0;$v<$cols;$v++) {
+                        $cv = $v == 0 ? 1 / sqrt(2) : 1;
+                        $sum += (2 * $cu * $cv) / sqrt($cols*$rows) * cos(((2 * $i + 1) / (2.0 * $rows)) * $u * pi()) * cos(((2 * $j + 1) / (2.0 * $cols)) * $v * pi()) * $data[$u][$v];
+                    }
+                }
+                $result[$i][$j]=$sum;
+            }
         }
-        return Matrix::multiplyMatrices($data_r, $data);
+        return $result;
     }
 }
