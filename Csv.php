@@ -14,7 +14,13 @@ class Csv {
         foreach($file as $line) {
             $row = explode(',', $line);
             foreach($row as $key => $value) {
-                $row[$key] = floatval($value);
+                if($value=='Inf') {
+                    $row[$key] = INF;
+                } else  if($value=='-Inf') {
+                    $row[$key] = -INF;
+                } else {
+                    $row[$key] = floatval($value);
+                }
             }
 
             $output[] = $row;

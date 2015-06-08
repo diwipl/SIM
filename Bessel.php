@@ -6,7 +6,7 @@ define('ACC', 40.0);
 
 class Bessel
 {
-    public function besseli1($x)
+    public static function besseli1($x)
     {
         if (($ax = abs($x)) < 3.75) {
             $y = $x / 3.75;
@@ -24,7 +24,7 @@ class Bessel
         return $x < 0.0 ? -$ans : $ans;
     }
 
-    public function besseli0($x)
+    public static function besseli0($x)
     {
         if (($ax = abs($x)) < 3.75) {
             $y = $x / 3.75;
