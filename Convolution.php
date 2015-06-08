@@ -8,7 +8,13 @@ class Convolution
         $kernelSize = count($k);
         for ($i = 0; $i < $kernelSize; ++$i) {
             for ($j = 0; $j < $kernelSize; ++$j) {
+
                 $output = $output + ($input[$x + $i][$y + $j] * $k[$i][$j]);
+                if($x == 254 AND $y == 0 AND false==true) {
+                    echo 'I:'.$input[$x + $i][$y + $j].PHP_EOL;
+                    echo 'K:'.$k[$i][$j].PHP_EOL;
+                    echo $output.PHP_EOL;
+                }
             }
         }
         return $output;
@@ -108,7 +114,6 @@ class Convolution
         for($i =0; $i<$number;$i++) {
             $output[$size+$number+$i] = $lastRow;
         }
-
 
         return $output;
     }

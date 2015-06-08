@@ -183,6 +183,34 @@ class Matrix {
         return $matrix;
     }
 
+    public static function exp($matrix) {
+        $rows = count($matrix);
+
+        for($i=0;$i<$rows;$i++) {
+            $columns = count($matrix[$i]);
+
+            for($j = 0; $j < $columns; $j++) {
+                $matrix[$i][$j] = exp($matrix[$i][$j]);
+            }
+        }
+
+        return $matrix;
+    }
+
+    public static function log($matrix) {
+        $rows = count($matrix);
+
+        for($i=0;$i<$rows;$i++) {
+            $columns = count($matrix[$i]);
+
+            for($j = 0; $j < $columns; $j++) {
+                $matrix[$i][$j] = log($matrix[$i][$j]);
+            }
+        }
+
+        return $matrix;
+    }
+
     public static function subtractMatrices($a1, $a2) {
         $rowsA1 = count($a1);
         $rowsA2 = count($a2);

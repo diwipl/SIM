@@ -20,6 +20,9 @@ class LPF
 */
             return null;
         } else {
+
+            echo 'Wchodzę do LPF'.PHP_EOL;
+
             $mx = count($image);
             $my = count($image[0]);
 
@@ -40,10 +43,17 @@ class LPF
                     $h[$i][$j] = $h1[$i+$mx][$j+$my];
                 }
             }
+
+            echo 'Zaczynam DCT2'.PHP_EOL;
             $lRnF=LPF::dct2($image);
+
+
             $lRnF2=Matrix::multiplyMatrices($lRnF, $h);
             //real values?
+
+            echo 'Zaczynam IDCT2'.PHP_EOL;
             $r = LPF::idct2($lRnF2);
+            echo 'Wychodzę'.PHP_EOL;
             return $r;
         }
     }

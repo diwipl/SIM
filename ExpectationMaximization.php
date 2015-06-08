@@ -57,9 +57,6 @@ class ExpectationMaximization
                 ,0
             );
 
-
-
-
             $sigma_k2 = Matrix::max(
                 Matrix::subtractMatrices(
                     Matrix::multiply(
@@ -80,7 +77,7 @@ class ExpectationMaximization
         }
 
 
-        return array('signal' => $a_k, 'sigma_n' => $sigma_k2);
+        return array('signal' => $a_k, 'sigma_n' => Matrix::sqrt($sigma_k2));
     }
 
     public function besseliApproximation($z) {
@@ -141,18 +138,16 @@ class ExpectationMaximization
         $M = Matrix::divideMatrices($Mn, $Md);
 
 
-        for($i=1;$i<$size;$i++) {
-            for($j=1;$j<$size;$j++) {
+        for($i=0;$i<$size;$i++) {
+            for($j=0;$j<$size;$j++) {
                 if($z[$i][$j] < 1.5) {
-
-
                     $M[$i][$j] = Bessel::besseli1($z[$i][$j])/Bessel::besseli0($z[$i][$j]);
                 }
             }
         }
 
-        for($i=1;$i<$size;$i++) {
-            for($j=1;$j<$size;$j++) {
+        for($i=0;$i<$size;$i++) {
+            for($j=0;$j<$size;$j++) {
                 if($z[$i][$j] == 0) {
                     $M[$i][$j] = 0;
                 }
