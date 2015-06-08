@@ -291,4 +291,19 @@ class Matrix {
 
         return $a1;
     }
+
+    public static function getColumn($array, $idx) {
+        $column = array();
+        for ($i = 0; $i < count($array); $i++) {
+            $column[$i] = $array[$i][$idx];
+        }
+        return $column;
+    }
+
+    public static function setColumn($array, $idx, $column) {
+        for ($i = 0; $i < count($array); $i++) {
+            $array[$i][$idx] = $column[$i];
+        }
+        return $array;
+    }
 }
