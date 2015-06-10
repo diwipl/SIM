@@ -320,6 +320,32 @@ class Matrix {
         return $a1;
     }
 
+    public static function multiplyComplexMatrixByRealMatrix($a1, $a2) {
+        $rowsA1 = count($a1);
+        $rowsA2 = count($a2);
+
+        if($rowsA1 !== $rowsA2) {
+            throw new Exception('Number of rows must match');
+        }
+
+
+        for($i=0;$i<$rowsA1;$i++) {
+            $columnsA1 = count($a1[$i]);
+            $columnsA2 = count($a2[$i]);
+
+            if($columnsA1 != $columnsA2) {
+                throw new Exception('Number of columns must match');
+            }
+
+            for($j = 0; $j < $columnsA1; $j++) {
+                $a1[$i][$j] = Complex::Cmul($a1[$i][$j], new Complex($a2[$i][$j], 0));
+            }
+        }
+
+        return $a1;
+    }
+
+
     public static function getColumn($array, $idx) {
         $column = array();
         for ($i = 0; $i < count($array); $i++) {
