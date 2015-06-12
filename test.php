@@ -5,25 +5,16 @@
  * Date: 06.06.2015
  * Time: 17:44
  */
-include 'Bessel.php';
-include 'Convolution.php';
+include 'Complex.class.php';
+include 'DCT.php';
+require_once 'Csv.php';
+require_once 'FFT.class.php';
+require_once 'LPF.php';
+require_once 'Matrix.php';
+ $array = [
+    [1,2,3,4],
+    [4,5,6,4],
+    [7,8,9,4],
+    [4,4,4,4] ];
 
-$input = array(
-    [1,2,3],
-    [4,5,6],
-    [7,8,9]
-);
-
-$kernel = [
-    [-1,-2,-1],
-    [0,0,0],
-    [1,2,1]
-];
-
-
-print_r(
-    Convolution::convolution2D(
-        Convolution::expandInput($input),
-        $kernel
-    )
-);
+print_R( LPF::dct2($array) );

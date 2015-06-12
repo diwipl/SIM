@@ -1,107 +1,84 @@
 <?php
 
-require_once 'FFT.class.php';
+require_once 'Matrix.php';
+require_once 'iDCT.php';
 
 class LPF
 {
     public static function calc($image, $sigma)
     {
-
         $mx = count($image);
         $my = count($image[0]);
-
+        $h1 = array(array());
+        for ($i = 0; $i < 2*$mx; $i++) {
+            for ($j = 0; $j < 2*$my; $j++) {
+                $x = $i - $mx + 0.5;
+                $y = $j - $my + 0.5;
+                $h1[$i][$j] = 1 / (2 * pi() * 2*$sigma * 2*$sigma) * exp( - ($x*$x + $y*$y)/2*2*$sigma*2*$sigma);
+            }
+        }
+        $h1 = Matrix::divide($h1, max(max($h1)));
         $h = array(array());
         for ($i = 0; $i < $mx; $i++) {
             for ($j = 0; $j < $my; $j++) {
-                $x = abs($i - ($mx-1) / 2);
-                $y = abs($j - ($my-1) / 2);
-                $h[$i][$j] = 1 / (2 * pi() * $sigma * $sigma) * exp( - ($x*$x + $y*$y)/(2*$sigma*$sigma));
+                $h[$i][$j] = $h1[$i+$mx][$j+$my];
             }
         }
 
-        $h = Matrix::divide($h, max(max($h)));
-        $lRnF=LPF::fftshift(LPF::fft2($image));
-        $lRnF2=Matrix::multiplyComplexMatrixByRealMatrix($lRnF, $h);
+       
 
-        $ir = LPF::ifft2(LPF::fftshift($lRnF2));
-        for ($i = 0; $i < $mx; $i++) {
-            for ($j = 0; $j < $my; $j++) {
-                $ir[$i][$j] = $ir[$i][$j]->getReal();
-            }
-        }
-        return $ir;
+        echo 'Whodzę do dct2'.PHP_EOL;
+
+        $start = microtime(true);
+
+        $lRnF=LPF::dct2($image);
+
+        echo 'Czas wykonania '.(microtime(true)-$start).'s'.PHP_EOL;
+
+        $lRnF2=Matrix::multiplyMatrices($lRnF, $h);
+
+        echo 'Wchodzę do idct2'.PHP_EOL;
+
+        $start = microtime(true);
+
+        $r = LPF::idct2($lRnF2);
+
+        echo 'Czas wykonania '.(microtime(true)-$start).'s'.PHP_EOL;
+
+        return $r;
     }
 
 
 
-    public static function fft2($data) {
-        $rows = count($data);
-        $cols = count($data[0]);
-
-        $fft1 = new FFT($rows);
-        $fft2 = new FFT($cols);
-
-        $complex = array();
-
-        function imag($complex) {
-            return $complex->getImag();
-        }
-
-        for ($i = 0; $i < $rows; $i++) {
-            $f = $fft1->fft($data[$i]);
-            $data[$i] = $fft2->complexToDouble($f);
-            $complex[$i] = array_map('imag', $f);
-        }
-        for ($i = 0; $i < $cols; $i++) {
-            $data = Matrix::setColumn($data, $i, $fft2->fft(Matrix::getColumn($data, $i)));
-            $complex = Matrix::setColumn($complex, $i, $fft2->fft(Matrix::getColumn($complex, $i)));
-        }
-        for ($i = 0; $i < $rows; $i++) {
-            for ($j = 0; $j < $cols; $j++) {
-                $c = Complex::Cmul($complex[$i][$j], new Complex(0, 1));
-                $data[$i][$j] = Complex::Cadd($data[$i][$j], $c);
+    public static function dct($data) {
+        $out = array();
+        $n = count($data);
+        $out[0] = round(1/sqrt($n)*array_sum($data), 4);
+        for ($i = 1; $i < $n; $i++) {
+            $sum = 0;
+            for ($j = 0; $j < $n; $j++) {
+                $sum += $data[$j]*cos(pi()*$i*(2*$j+1)/(2*$n));
             }
+            $out[$i] = sqrt(2/$n)*$sum;
+        }
+        return $out;
+    }
+    public static function dct2($data) {
+        for ($row = 0; $row < count($data); $row++) {
+            $data[$row] = LPF::dct($data[$row]);
+        }
+        $cols = count($data[0]);
+        for ($col = 0; $col < $cols; $col++) {
+            $afterDct = LPF::dct(Matrix::getColumn($data, $col));
+            $data = Matrix::setColumn($data, $col, $afterDct);
         }
         return $data;
     }
 
-    public static function ifft2($data) {
-        $rows = count($data);
-        $cols = count($data[0]);
+    public static function idct2($data) {
+        $size = count($data);
+        $idct = new iDCT($size);
 
-        $fft1 = new FFT($rows);
-        $fft2 = new FFT($cols);
-
-        for ($i = 0; $i < $cols; $i++) {
-            $f = $fft2->ifft(Matrix::getColumn($data, $i));
-            for ($j = 0; $j < count($f); $j++) {
-                $f[$j] = Complex::Cinv($f[$j]);
-            }
-            $data = Matrix::setColumn($data, $i, $f);
-        }
-        for ($i = 0; $i < $rows; $i++) {
-            $data[$i] = $fft1->ifft($data[$i]);
-        }
-        return $data;
-    }
-
-    public static function fftshift($data) {
-        $rows = count($data);
-        $cols = count($data[0]);
-
-        $offsetx = ceil($cols/2);
-        $offsety = ceil($rows/2);
-
-        $new = array(array());
-        for ($i = 0; $i < $rows; $i++) {
-            for ($j = 0; $j < $cols; $j++) {
-                $x = ($i+$offsetx)%$cols;
-                $y = ($j+$offsety)%$rows;
-
-                $new[$i][$j] = $data[$x][$y];
-            }
-        }
-
-        return $new;
+        return $idct->idct2d($data);
     }
 }

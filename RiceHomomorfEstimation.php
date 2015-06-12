@@ -46,10 +46,12 @@ public $lpf1Sub;
         $this->lRn = $this->logRn($this->Rn);
 
         if($readyLpf) {
-            $this->lpf2 = LPF::calc($this->lRn,$lpf);
+           $this->lpf2 = LPF::calc($this->lRn,$lpf);
         } else {
-            $this->lpf2 = Csv::loadFileToArray('lpf2.csv');
+           $this->lpf2 = Csv::loadFileToArray('lpf_first.csv');
         }
+
+        return;
 
         echo 'Po lowpass1'.PHP_EOL;
 
@@ -78,12 +80,12 @@ public $lpf1Sub;
         echo 'Po lowpass2'.PHP_EOL;
 
         $this->fc1 = CorrectRiceGauss::correct($snr);
-        $this->lpf1Sub = Matrix::divideMatrices($this->lpf2,$this->fc1);
+        $this->lpf1Sub = Matrix::subtractMatrices($this->lpf2,$this->fc1);
 
         if($readyLpf) {
             $this->lpf1 = LPF::calc($this->lpf1Sub, $lpf+2);
         } else {
-            $this->lpf1 = Csv::loadFileToArray('lpf1_sub.csv');
+            $this->lpf1 = Csv::loadFileToArray('lpf1.csv');
         }
 
         echo 'Po lowpass3'.PHP_EOL;

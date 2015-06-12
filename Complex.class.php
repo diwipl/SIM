@@ -135,6 +135,13 @@ class Complex {
         }
 	}
 
+
+    static public function Cexp($z) {
+        return new Complex(
+            exp( $z->getReal() ) * cos( $z->getImag() ),
+            exp( $z->getReal() ) * sin( $z->getImag() )
+        );
+    }
 	/**
 	 * Return the inverse of a complex number
 	 * @param complex $z
@@ -151,7 +158,7 @@ class Complex {
 
 	/**
 	 * Return the multiplication of a complex number with a scalar value
-	 * @param complex $n
+	 * @param double $n
 	 * @param complex $z
 	 * @return complex
 	 */
@@ -163,6 +170,15 @@ class Complex {
 		
 		return $c;
 	}
+
+    static public function RCdiv($n, $z) {
+        $c = new Complex(0, 0);
+
+        $c->setReal($z->getReal() / $n);
+        $c->setImag(-$z->getImag() / $n);
+
+        return $c;
+    }
 	
 	/**
 	* Getters and setters
@@ -182,5 +198,16 @@ class Complex {
 	public function getImag() {
 		return $this->imag;
 	}
+
+    public function __toString() {
+        $string = $this->real.' ';
+        if($this->imag >= 0) {
+            $string .= '+ '.$this->imag.'i';
+        } else {
+            $string .= '- '.abs($this->imag).'i';
+        }
+
+        return $string;
+    }
 }
 ?>

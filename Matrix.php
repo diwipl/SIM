@@ -360,4 +360,9 @@ class Matrix {
         }
         return $array;
     }
+
+    public static function transpose($data) {
+        array_unshift($data, null);
+        return call_user_func_array('array_map', $data);
+    }
 }
