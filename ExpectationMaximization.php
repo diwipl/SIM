@@ -1,5 +1,9 @@
 <?php
 
+require_once 'Matrix.php';
+require_once 'Convolution.php';
+require_once 'Bessel.php';
+
 class ExpectationMaximization
 {
     public function createMask($input, $N, $windowSize)

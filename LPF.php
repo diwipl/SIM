@@ -14,7 +14,7 @@ class LPF
             for ($j = 0; $j < 2*$my; $j++) {
                 $x = $i - $mx + 0.5;
                 $y = $j - $my + 0.5;
-                $h1[$i][$j] = 1 / (2 * pi() * 2*$sigma * 2*$sigma) * exp( - ($x*$x + $y*$y)/2*2*$sigma*2*$sigma);
+                $h1[$i][$j] = 1 / (2 * pi() * 2*$sigma * 2*$sigma) * exp( - ($x*$x + $y*$y)/(2*2*$sigma*2*$sigma));
             }
         }
         $h1 = Matrix::divide($h1, max(max($h1)));
@@ -25,25 +25,10 @@ class LPF
             }
         }
 
-       
-
-        echo 'Whodzę do dct2'.PHP_EOL;
-
-        $start = microtime(true);
-
         $lRnF=LPF::dct2($image);
-
-        echo 'Czas wykonania '.(microtime(true)-$start).'s'.PHP_EOL;
-
         $lRnF2=Matrix::multiplyMatrices($lRnF, $h);
-
-        echo 'Wchodzę do idct2'.PHP_EOL;
-
-        $start = microtime(true);
-
         $r = LPF::idct2($lRnF2);
 
-        echo 'Czas wykonania '.(microtime(true)-$start).'s'.PHP_EOL;
 
         return $r;
     }
@@ -53,7 +38,7 @@ class LPF
     public static function dct($data) {
         $out = array();
         $n = count($data);
-        $out[0] = round(1/sqrt($n)*array_sum($data), 4);
+        $out[0] = 1/sqrt($n)*array_sum($data);
         for ($i = 1; $i < $n; $i++) {
             $sum = 0;
             for ($j = 0; $j < $n; $j++) {

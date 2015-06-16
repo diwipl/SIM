@@ -40,6 +40,30 @@ class Matrix {
         return true;
     }
 
+    public static function maxError($m1, $m2) {
+        $size = count($m1);
+
+        $max = $x = $y = 0;
+
+        for($i=0;$i<$size;$i++) {
+            for($j=0;$j<$size;$j++) {
+                $difference = abs($m1[$i][$j]-$m2[$i][$j]);
+                if($difference > $max) {
+                    $max = $difference;
+                    $x = $i;
+                    $y = $j;
+                }
+            }
+        }
+
+        return [
+            'max' => $max,
+            'x' => $x,
+            'y' => $y
+        ];
+    }
+
+
     public static function add($matrix, $number) {
         $rows = count($matrix);
 
